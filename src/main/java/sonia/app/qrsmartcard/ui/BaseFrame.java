@@ -1,5 +1,7 @@
 package sonia.app.qrsmartcard.ui;
 
+import java.awt.Dimension;
+import javax.swing.JDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +14,7 @@ public class BaseFrame extends javax.swing.JFrame
 
   private final static Logger LOGGER = LoggerFactory.getLogger(
     BaseFrame.class.getName());
-  
+
   /**
    * Creates new form BaseFrame
    */
@@ -40,9 +42,42 @@ public class BaseFrame extends javax.swing.JFrame
   {
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+    addMouseListener(new java.awt.event.MouseAdapter()
+    {
+      public void mousePressed(java.awt.event.MouseEvent evt)
+      {
+        formMousePressed(evt);
+      }
+    });
 
     pack();
   }// </editor-fold>//GEN-END:initComponents
+
+  private void formMousePressed(java.awt.event.MouseEvent evt)//GEN-FIRST:event_formMousePressed
+  {//GEN-HEADEREND:event_formMousePressed
+    long timestamp = System.currentTimeMillis();
+
+    if (timestamp - lastMousePressedTimsstamp > 2000)
+    {
+      mousePressedCounter = 0;
+    }
+    mousePressedCounter++;
+    LOGGER.debug("mouse pressed bf : " + evt.getPoint() + "  " + (timestamp
+      - lastMousePressedTimsstamp) + " " + mousePressedCounter);
+    
+    if ( mousePressedCounter >= 3 )
+    {
+      ShutdownDialog dialog = new ShutdownDialog(this,true);
+      dialog.setBounds( 300, 170, 200, 150);
+      dialog.setVisible(true);
+    }
+    
+    lastMousePressedTimsstamp = timestamp;
+  }//GEN-LAST:event_formMousePressed
+
+  private int mousePressedCounter = 0;
+
+  private long lastMousePressedTimsstamp;
 
   private ViewPort viewPort;
 

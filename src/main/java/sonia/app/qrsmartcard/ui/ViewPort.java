@@ -43,14 +43,7 @@ public class ViewPort extends javax.swing.JPanel
 
   private ViewPort()
   {
-    addMouseListener(new java.awt.event.MouseAdapter()
-    {
-      @Override
-      public void mousePressed(java.awt.event.MouseEvent evt)
-      {
-        LOGGER.info( "mouse pressed : " + evt.getPoint());
-      }
-    });
+
   }
 
   public static ViewPort getInstance()
@@ -113,6 +106,10 @@ public class ViewPort extends javax.swing.JPanel
         
       case 3:
         g2d.drawString("Lese Karte...", 40, 280);
+        break;
+
+      case 4:
+        g2d.drawString("Shutdown...", 40, 280);
         break;
 
       default:
