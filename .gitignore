@@ -1,0 +1,4 @@
+config/
+logs/
+target/
+qr-smartcard-app.jar
