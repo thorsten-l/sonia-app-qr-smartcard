@@ -5,6 +5,15 @@
  */
 package sonia.app.qrsmartcard.ui;
 
+import com.google.common.base.Strings;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.oned.Code39Writer;
+import com.google.zxing.qrcode.QRCodeWriter;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -13,6 +22,9 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
 import javax.imageio.ImageIO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,31 +38,43 @@ public class ViewPort extends javax.swing.JPanel
 {
   private final static Logger LOGGER = LoggerFactory.getLogger(
     ViewPort.class.getName());
-  
+
   private final static int VP_WIDTH = 800;
 
   private final static int VP_HEIGHT = 480;
 
   private int state = 0;
 
-  private QrResponse reponse;
+  private QrResponse response;
 
   private final Font bigFont = new Font("Arial", Font.BOLD, 72);
+
   private final Font midFont = new Font("Arial", Font.BOLD, 48);
+
   private final Font smallFont = new Font("Arial", Font.BOLD, 24);
 
   private final static ViewPort SINGLETON = new ViewPort();
 
+  private BufferedImage logoImage;
+
   private ViewPort()
   {
-
+    try
+    {
+      logoImage = ImageIO.read(ViewPort.class.getResourceAsStream(
+        "/images/logo.png"));
+    }
+    catch (IOException ex)
+    {
+      LOGGER.error("Can not read logo image");
+    }
   }
 
   public static ViewPort getInstance()
   {
     return SINGLETON;
   }
-  
+
   @Override
   public void paint(Graphics g)
   {
@@ -66,46 +90,72 @@ public class ViewPort extends javax.swing.JPanel
     {
       case 0:
         g2d.drawString("Karte auflegen", 60, 280);
+        g2d.drawImage(logoImage, 20, 20, this);
         break;
 
       case 1:
         g2d.drawString("Unbekannte Karte", 40, 280);
+        g2d.drawImage(logoImage, 20, 20, this);
         break;
 
       case 2:
-        byte[] imageData = Base64.getDecoder().decode(reponse.getJpegPhoto());
+        byte[] imageData = Base64.getDecoder().decode(response.getJpegPhoto());
         g2d.setFont(midFont);
-        g2d.drawString(reponse.getGivenName(), 380, 80);
-        g2d.drawString(reponse.getSn(), 380, 140);
-        
+        g2d.drawString(response.getGivenName(), 380, 80);
+        g2d.drawString(response.getSn(), 380, 140);
+
         g2d.setFont(smallFont);
-        g2d.drawString( reponse.getMail(), 380, 240);
-        g2d.drawString("Typ: " + reponse.getEmployeeType(), 380, 280);
-       
-        if ( "s".equalsIgnoreCase(reponse.getEmployeeType()))
+        g2d.drawString(response.getMail(), 380, 240);
+        g2d.drawString("Typ: " + response.getEmployeeType(), 380, 280);
+
+        if ("s".equalsIgnoreCase(response.getEmployeeType()))
         {
-          g2d.drawString("Matrikel-Nr: " + reponse.getSoniaStudentNumber(), 380, 320);
+          g2d.
+            drawString("Matrikel-Nr: " + response.getSoniaStudentNumber(), 380,
+              320);
         }
-        
+
         {
           try
           {
             BufferedImage image = ImageIO.read(new ByteArrayInputStream(
               imageData));
-            LOGGER.debug( "image width = " + image.getWidth() + ", height=" + image.getHeight());
-            g2d.drawImage( image, null, 0, 0);
+            LOGGER.debug("image width = " + image.getWidth() + ", height="
+              + image.getHeight());
+            g2d.drawImage(image, null, 0, 0);
+
+            if (!Strings.isNullOrEmpty(response.getSoniaChipcardBarcode()))
+            {
+              Code39Writer barcodeWriter = new Code39Writer();
+              BitMatrix bitMatrix
+                = barcodeWriter.encode(response.getSoniaChipcardBarcode(),
+                  BarcodeFormat.CODE_39, 400, 80);
+
+              g2d.
+                drawString("Bibliothek: " + response.getSoniaChipcardBarcode(),
+                  380,
+                  380);
+              g2d.drawImage(MatrixToImageWriter.toBufferedImage(bitMatrix), 400,
+                400, this);
+            }
           }
           catch (IOException ex)
           {
             LOGGER.error("ERROR loading image");
             //
           }
+          catch (WriterException ex)
+          {
+            java.util.logging.Logger.getLogger(ViewPort.class.getName()).
+              log(Level.SEVERE, null, ex);
+          }
         }
 
         break;
-        
+
       case 3:
         g2d.drawString("Lese Karte...", 40, 280);
+        g2d.drawImage(logoImage, 20, 20, this);
         break;
 
       case 4:
@@ -124,7 +174,7 @@ public class ViewPort extends javax.swing.JPanel
 
   public static void setQrResponse(QrResponse response)
   {
-    SINGLETON.reponse = response;
+    SINGLETON.response = response;
     setState(2);
   }
 

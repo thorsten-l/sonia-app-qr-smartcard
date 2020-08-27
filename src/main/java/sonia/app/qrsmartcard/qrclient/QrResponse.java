@@ -1,5 +1,6 @@
 package sonia.app.qrsmartcard.qrclient;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -9,6 +10,7 @@ import lombok.ToString;
  * @author Thorsten Ludewig <t.ludewig@ostfalia.de>
  */
 @ToString
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class QrResponse
 {
   @Getter
@@ -36,6 +38,10 @@ public class QrResponse
   @Getter
   @Setter
   private String soniaStudentNumber;
+  
+  @Getter
+  @Setter
+  private String soniaChipcardBarcode;
   
   @Getter
   @Setter
