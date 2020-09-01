@@ -1,0 +1,1 @@
+# sonia-app-qr-smartcard
