@@ -18,14 +18,7 @@ public class PasswordSerializer extends JsonSerializer<String>
     PasswordSerializer.class.getName());
 
     /** secret key */
-  private static final char[] KEY = new char[]
-  {
-    '2', 'f', '7', 'a', '3', '9', 'c', '2', 
-    'a', '7', 'd', '7', 'f', 'f', '8', '9', 
-    'f', '0', 'e', 'f', '6', '1', 'e', 'a', 
-    '2', '4', '0', 'a', 'b', '9', '4', '4', 
-    'd', '1', '5', 'd', 'f', '0', 'f', 'f'
-  };
+  private static final char[] KEY = Config.getInstance().getCipherKey().toCharArray();
    
   /** cipher */
   private static final AesSimpleCipher CIPHER = 

@@ -24,7 +24,7 @@ import sonia.commons.crypt.util.HEX;
  *
  *
  * @version $version$, 18/08/19
- * @author Thorsten Ludewig <t.ludewig@ostfalia.de>Dr. Thorsten Ludewig <t.ludewig@gmail.com>
+ * @author Thorsten Ludewig <t.ludewig@ostfalia.de>
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @ToString
@@ -256,9 +256,10 @@ public class Config
     random.nextBytes(key);
     config = new Config();
     config.cipherKey = HEX.convert(key).toLowerCase();
+    //
     random.nextBytes(key);
     config.apiAuthToken = HEX.convert(key).toLowerCase();
-    config.webServicePort = 8080;
+    //
     config.webServiceUrl = "https://qr.yourdomain.de";
     Config.writeConfig();
     System.out.println(config.toString());
@@ -271,9 +272,6 @@ public class Config
   @Getter
   private String webServiceUrl;
 
-  @Getter
-  private int webServicePort;
-  
   @Getter
   private String apiAuthToken;
   

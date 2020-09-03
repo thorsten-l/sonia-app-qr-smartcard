@@ -29,8 +29,6 @@ public class App
   private final static Logger LOGGER = LoggerFactory.getLogger(
     App.class.getName());
 
-  // Seriennummer 36067801265368580 // Folgenummer 2
-
   /* Commands */
   static final byte GET_MANUFACTURING_DATA = (byte) 0x60;
 
