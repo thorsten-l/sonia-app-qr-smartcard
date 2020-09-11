@@ -1,5 +1,5 @@
 config/
 logs/
 target/
+private/
 qr-smartcard-app.jar
-DEPLOY_PRODUCTION.sh
