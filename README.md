@@ -1,4 +1,6 @@
-# sonia-app-qr-smartcard
+# QR-Smartcard Application
+
+- [Web-Service](https://github.com/thorsten-l/sonia-webapp-qr-travel) required by this application.
 
 ## Hardware
 
